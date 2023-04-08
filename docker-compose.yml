@@ -1,0 +1,59 @@
+version: "3.2"
+
+services:
+
+  rabbit_mq:
+
+    image: rabbitmq:3.8-rc-management
+    container_name: rabbit_mq
+    ports:
+        - '5672:5672'
+        - '15672:15672'
+
+  get-images:
+    build: get_images
+    depends_on:
+        - rabbit_mq
+    environment:
+        AMQP_URL: "amqp://rabbit_mq?connection_attempts=10&retry_delay=10"
+        SRCDIR: "$SRCDIR"
+    volumes:
+        - $SRCDIR:/$SRCDIR
+        - ./logs:/logs
+  
+  dominant-rgb:
+    build: dominant_rgb
+    depends_on:
+        - get-images
+    environment:
+        AMQP_URL: "amqp://rabbit_mq?connection_attempts=10&retry_delay=10"
+    volumes:
+        - ./logs:/logs
+
+  put-images:
+    build: put_images
+    depends_on:
+        - dominant-rgb
+    environment:
+        AMQP_URL: "amqp://rabbit_mq?connection_attempts=10&retry_delay=10"
+        SRCDIR: "$SRCDIR"
+        DESTDIR: "${DESTDIR:-/output_dir}"
+    volumes:
+        - $SRCDIR:/$SRCDIR  
+        - ${DESTDIR:-./output_dir}:/${DESTDIR:-/output_dir}
+        - ./logs:/logs
+
+  unit-tests:
+    build: unit_tests
+    depends_on:
+        - rabbit_mq
+    environment:
+        AMQP_URL: "amqp://rabbit_mq?connection_attempts=10&retry_delay=10"
+    volumes:
+        - ./get_images:/get_images
+        - ./logs:/logs
+        - ./example_dir:/example_dir
+
+volumes:
+    rabbit_mqdata:
+      driver: local
