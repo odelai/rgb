@@ -22,6 +22,6 @@ commands are the shell commands).
 * We can run separate containers: `docker-compose up <container_name>` (container_names: get-images, dominant-rgb, put-images, unit-tests)
 
 It doesn't move the images, but only copies to the target directory (to red, green or blue subfolder correspondingly)
-However, resulting images have limited permssion mode, so run `sudo chmod 400 .` after getting in each subfolder (`cd <dest_dir/channel>`).
+However, resulting folder might have permssion issues, so you can run `sudo chmod -R 777 <target_directory>`.
 
 
