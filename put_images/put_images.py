@@ -9,7 +9,7 @@ import shutil
 # names of subfolders
 RGB = ["red", "green", "blue"]
 # inactivity timeout (in seconds)
-TIMEOUT: float = 5
+TIMEOUT: float = 10
 
 
 def setup_logger() -> logging.Logger:
@@ -39,7 +39,7 @@ def main():
     
     logger = setup_logger()
     
-    for _, _, body in channel.consume(queue=queuename, inactivity_timeout=TIMEOUT):
+    for _, _, body in channel.consume(queue=queuename):
         if body is None:
             break
         

@@ -50,7 +50,7 @@ def main():
 
     logger = setup_logger()
 
-    for _, _, body in channel.consume(queue=receive_queuename, inactivity_timeout=TIMEOUT):
+    for _, _, body in channel.consume(queue=receive_queuename):
         if body is None:
             break
         
