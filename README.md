@@ -11,7 +11,7 @@ Modules communicate with each other via RabbitMQ message broker.
 
 ## Run the program
 
-Commands to run the program (and docker-compose.yml) use UNIX paths (paths have '/' divisor unlike in Windows, export and chmod commands are the shell commands).
+Commands to run the program (and docker-compose.yml) use UNIX paths (paths have '/' divisor unlike in Windows), export and chmod commands are the shell commands).
 
 * export the source directory as a variable: `export SRCDIR=<path_to_directory>`
 * export target directory variable: `export DESTDIR=<path_to_directory>` (optional, by default is "output_dir")
