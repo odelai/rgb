@@ -25,4 +25,4 @@ It doesn't move the images, but only copies to the target directory (to red, gre
 
 However, resulting folder might have permssion issues, so you can run `sudo chmod -R 777 <target_directory>`.
 
-
+Supported formats: jpg, png, jfif, pbm, xbm, pgm, ppm, tiff, webp, bmp.
