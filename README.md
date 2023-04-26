@@ -15,8 +15,8 @@ Commands to run the program (and docker-compose.yml) use UNIX paths (paths have 
 
 * export the source directory as a variable: `export SRCDIR=<path_to_directory>` (you can try ./example_dir as the <path_to_directory>)
 * export target directory variable: `export DESTDIR=<path_to_directory>` (optional, by default is "output_dir")
-* build: `docker-compose build` or if using sudo: `sudo -E docker-compose build` 
-* run: `docker-compose up` or `sudo -E docker-compose up`
+* build: `docker-compose build` or if using sudo: `sudo -E docker-compose build`
+* run: `docker-compose up` or `sudo -E docker-compose up` (-E if a short form of --preserve-env and it tells security policy to preserve existing environment variables, i.e. our SRCDIR variable as well.)
 * to clean up use:  `docker-compose down -v --rmi all --remove-orphans`
 * We can run separate containers: `docker-compose up <container_name>` or `sudo -E docker-compose up <container_name>`(container_names: get-images, dominant-rgb, put-  images, unit-tests)
 
