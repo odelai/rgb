@@ -124,12 +124,18 @@ Arguments:
 # Example
 
 The usual workflow is as follows:
+
 	1. `python inheritance.py datasets/<dataset_name>/01_ST/SEG/ modified/inheritance/<dataset_name>/ datasets/<dataset_name>/01_GT/TRA/man_track.txt`
-	2. `python label.py modified/inheritance/<dataset_name>/ modified/label/<dataset_name>/ <label>`
-	3. then uploading the data from `modified/label/<dataset_name>`
-	4. using binary opening in Tomviz and saving the data in `modified/open/`
-	5. `python bring_back.py modified/open/<dataset_name>.tiff modified/result/<dataset_name>/ datasets/<dataset_name>/01_ST/SEG/``
-	6. the resulting images are in `datasets/result/<dataset_name>`
+
+ 	2. `python label.py modified/inheritance/<dataset_name>/ modified/label/<dataset_name>/ <label>`
+	
+ 	3. then uploading the data from `modified/label/<dataset_name>`
+	
+ 	4. using binary opening in Tomviz and saving the data in `modified/open/`
+	
+ 	5. `python bring_back.py modified/open/<dataset_name>.tiff modified/result/<dataset_name>/ datasets/<dataset_name>/01_ST/SEG/``
+	
+ 	6. the resulting images are in `datasets/result/<dataset_name>`
 
 Pass the name of the dataset in place of `<dataset_name>`. Insert the examined label in `<label>`, if you want to keep all then 0.
 
