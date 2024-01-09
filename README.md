@@ -25,3 +25,111 @@ It doesn't move the images, but only copies to the target directory (to red, gre
 However, resulting folder might have permssion issues, so you can run `sudo chmod -R 777 <target_directory>`.
 
 Supported formats: jpg, png, jfif, pbm, xbm, pgm, ppm, tiff, webp, bmp.
+
+
+
+This project provides the set of tools for correcting cell segmentation results using the sample datasets from Cell
+Tracking Challenge. Toolset prepares the data before using the Tomviz and later postprocesses.  
+
+# Directory structure
+
+Directory structure:
+```
+datasets/
+├── DIC-C2DH-HeLa/
+├── Fluo-N2DH-GOWT1/
+└── Fluo-N2DL-HeLa/
+
+modified/
+├── inheritance/
+├── label/
+├── open/
+├── result/
+├── stretch/
+└── videos/
+
+Fluo-N2DH-GOWT1/
+├── 01/
+├── 01_GT/
+│   ├── SEG/
+│   └── TRA/
+├── 01_ST/
+│   └── SEG/
+├── 02/
+├── 02_GT/
+│   ├── SEG/
+│   └── TRA/
+└── 02_ST/
+    └── SEG/
+```
+
+The initial datasets are stored in 'datasets' directory. Each of the dataset have the same structure containing original images, golden truths(GT), and silver truths(ST). For the purposes of this project only silver truth segmentation results are used. 
+Scripts work on copies of the data and stor save them in modified/.
+
+# Scripts
+
+```
+Description: preserves the inheritance. Cell with all its descendants are labeled the same. This way, only primary labels remain.
+Usage: python inheritance.py <src> <dst> <inher>
+Arguments:
+	<src> 		Source directory
+	<dst> 		Destination directory
+	<inher>		Filename with path where the inheritance file is stored
+Additionaly, it prints out relevant inheritance data. Example of Fluo-N2DH-GOWT1:
+
+Total amount of all labels: 29
+Total amount of primary labels: 24
+Primary labels: [0, 1, 2, 3, 4, 5, 6, 8, 9, 10, 15, 16, 23, 24, 25, 26, 27, 28, 29, 30, 31, 32, 33, 34]
+
+Labels with the most descendants: [10, 16]
+Number of descendants: 2
+```
+
+```
+Description: Filters out all other label except the given one. It produces binary image, background becomes 0, foreground(labels) becomes 1.
+Usage: python label.py <src> <dst> <label>
+Arguments:
+	<src>		Source directory
+	<dst> 		Destination directory
+	<label> 	Label value to keep, if 0 then keeping all the labels
+```
+
+```
+Description: Splits the multitiff image produced by Tomviz into individual images. Assigns back all the labels as it was in the segmentation result(i.e. without inheritance). And since binary opening might cover pixels that were not initially part of it, it compares result with the original dataset.
+Usage: python bring_back.py <src> <dst> <origin>
+Arguments:
+	<src> 		Source to multitiff file
+	<dst> 		Destination directory
+	<origin>	Directory where the original segmentation results are stored
+```
+
+```
+Description: Makes video from the sequence of images. It is not part of the workflow, however might be useful. 
+Usage: python make_video.py <src> <dst> <fps>
+Arguments:
+	<src>		Source directory
+	<dst>		Destination directory
+	<fps>		Frames per second
+```
+
+```
+Description: Does the linear stretching of intensities. Also serves just as helping script.
+Usage: python stretch.py <src> <dst> <lower>
+Arguments:	
+	<src>		Source directory
+	<dst>		Destination directory
+	<lower>		Value of lower boundary
+```
+
+# Example
+
+The usual workflow is as follows:
+	1. `python inheritance.py datasets/<dataset_name>/01_ST/SEG/ modified/inheritance/<dataset_name>/ datasets/<dataset_name>/01_GT/TRA/man_track.txt`
+	2. `python label.py modified/inheritance/<dataset_name>/ modified/label/<dataset_name>/ <label>`
+	3. then uploading the data from `modified/label/<dataset_name>`
+	4. using binary opening in Tomviz and saving the data in `modified/open/`
+	5. `python bring_back.py modified/open/<dataset_name>.tiff modified/result/<dataset_name>/ datasets/<dataset_name>/01_ST/SEG/``
+	6. the resulting images are in `datasets/result/<dataset_name>`
+
+Pass the name of the dataset in place of `<dataset_name>`. Insert the examined label in `<label>`, if you want to keep all then 0.
+
