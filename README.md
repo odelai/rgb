@@ -171,9 +171,10 @@ Arguments:
 # Example
 
 One of the possible worflows can be as follows:
-	1. python inheritance.py datasets/<dataset_name>/01_ST/SEG/  modified/inheritance/<dataset_name>/  datasets/<dataset_name>/01_GT/TRA/man_track.txt
 
-	2. python label.py modified/inheritance/<dataset_name>/  modified/label/<dataset_name>/ <label>
+    1. python inheritance.py datasets/<dataset_name>/01_ST/SEG/  modified/inheritance/<dataset_name>/  datasets/<dataset_name>/01_GT/TRA/man_track.txt
+
+    2. python label.py modified/inheritance/<dataset_name>/  modified/label/<dataset_name>/ <label>
 	
     3. then uploading the data from modified/label/<dataset_name> to Tomviz
 	
