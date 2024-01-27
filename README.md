@@ -99,7 +99,7 @@ Arguments:
 
 
 ```
-Name: custom_binary_opening.py
+Name: custom_binary_open.py
 Description: Performs morphological binary opening on segmented objects by a 3d bar structuring element with a given depth.
 Usage: This script is not used via command line, but passed to tomviz and launched using its graphical interface.
 ```
