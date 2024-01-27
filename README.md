@@ -184,4 +184,4 @@ One of the possible worflows can be as follows:
 	
     6. the resulting images are in datasets/result/<dataset_name>
 
-Pass the name of the dataset in place of <dataset_name>. Pass the examined label in <label>, if you want to keep all of labels then label=0.
+Pass the name of the dataset in place of <dataset_name>. Pass the examined label in place of <label>, if you want to keep all of labels then label=0.
