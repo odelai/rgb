@@ -29,7 +29,7 @@ Supported formats: jpg, png, jfif, pbm, xbm, pgm, ppm, tiff, webp, bmp.
 
 
 This project provides the set of tools for correcting cell segmentation results using the sample datasets from Cell
-Tracking Challenge. Toolset prepares the data before using the Tomviz and later postprocesses.  
+Tracking Challenge. Toolset prepares the data for Tomviz, and after that performs postprocessing.  
 
 # Directory structure
 
@@ -63,19 +63,21 @@ Fluo-N2DH-GOWT1/
     └── SEG/
 ```
 
-The initial datasets are stored in 'datasets' directory. Each of the dataset have the same structure containing original images, golden truths(GT), and silver truths(ST). For the purposes of this project only silver truth segmentation results are used. 
+The initial datasets are stored in 'datasets' directory. Each of the dataset has the same structure containing original images, golden truths(GT), and silver truths(ST). This project deals with silver truth segmentation results. 
 Scripts work on copies of the data and stor save them in modified/.
 
 # Scripts
 
 ```
+Name: inheritance.py
 Description: preserves the inheritance. Cell with all its descendants are labeled the same. This way, only primary labels remain.
 Usage: python inheritance.py <src> <dst> <inher>
 Arguments:
 	<src> 		Source directory
 	<dst> 		Destination directory
 	<inher>		Filename with path where the inheritance file is stored
-Additionaly, it prints out relevant inheritance data. Example of Fluo-N2DH-GOWT1:
+
+Additionaly, it prints out relevant inheritance data. Example for Fluo-N2DH-GOWT1:
 
 Total amount of all labels: 29
 Total amount of primary labels: 24
@@ -86,6 +88,7 @@ Number of descendants: 2
 ```
 
 ```
+Name: label.py
 Description: Filters out all other label except the given one. It produces binary image, background becomes 0, foreground(labels) becomes 1.
 Usage: python label.py <src> <dst> <label>
 Arguments:
@@ -94,7 +97,21 @@ Arguments:
 	<label> 	Label value to keep, if 0 then keeping all the labels
 ```
 
+
 ```
+Name: custom_binary_opening.py
+Description: Performs morphological binary opening on segmented objects by a 3d bar structuring element with a given depth.
+Usage: This script is not used via command line, but passed to tomviz and launched using its graphical interface.
+```
+
+```
+Name: custom_binary_close.py
+Description: Performs morphological binary closing on segmented objects by a 3d bar structuring element with a given depth.
+Usage: This script is not used via command line, but passed to tomviz and launched using its graphical interface.
+```
+
+```
+Name: bring_back.py
 Description: Splits the multitiff image produced by Tomviz into individual images. Assigns back all the labels as it was in the segmentation result(i.e. without inheritance). And since binary opening might cover pixels that were not initially part of it, it compares result with the original dataset.
 Usage: python bring_back.py <src> <dst> <origin>
 Arguments:
@@ -104,6 +121,35 @@ Arguments:
 ```
 
 ```
+Name: connected_components.py
+Description: filters out artifacts computing connected components and discarding those that are below a given threshold
+Usage: python connected_components.py <src> <dst> <threshold>
+Arguments:
+	<src> 		Source directory
+	<dst> 		Destination directory
+	<threshold> Areas of components that are below this threshold are discarded
+```
+
+```
+Name: iou.py
+Description: Computes intersection-over-unit. 
+Usage: python iou.py <src> <initial_dataset>
+Arguments:  
+	<src>				Source directory
+	<intial_dataset>	Directory of initial dataset, in our case silver segmentation truth 
+```
+
+```
+Name: recall.py
+Description: Computes recall. 
+Usage: Usage: python recall.py <src> <tra>
+Arguments:  
+	<src>		Source directory
+	<tra>		Directory of golden tracking truth 
+```
+
+```
+Name: make_video
 Description: Makes video from the sequence of images. It is not part of the workflow, however might be useful. 
 Usage: python make_video.py <src> <dst> <fps>
 Arguments:
@@ -113,6 +159,7 @@ Arguments:
 ```
 
 ```
+Name: stretch.py
 Description: Does the linear stretching of intensities. Also serves just as helping script.
 Usage: python stretch.py <src> <dst> <lower>
 Arguments:	
@@ -123,19 +170,17 @@ Arguments:
 
 # Example
 
-The usual workflow is as follows:
+One of the possible worflows can be as follows:
+	1. python inheritance.py datasets/<dataset_name>/01_ST/SEG/  modified/inheritance/<dataset_name>/  datasets/<dataset_name>/01_GT/TRA/man_track.txt
 
-	1. `python inheritance.py datasets/<dataset_name>/01_ST/SEG/ modified/inheritance/<dataset_name>/ datasets/<dataset_name>/01_GT/TRA/man_track.txt`
+	2. python label.py modified/inheritance/<dataset_name>/  modified/label/<dataset_name>/ <label>
+	
+    3. then uploading the data from modified/label/<dataset_name> to Tomviz
+	
+    4. performing binary opening/closing in Tomviz and saving the data in modified/open/ as one multitiff image
+	
+    5. python bring_back.py modified/open/<dataset_name>.tiff  modified/result/<dataset_name>/  datasets/<dataset_name>/01_ST/SEG/
+	
+    6. the resulting images are in datasets/result/<dataset_name>
 
- 	2. `python label.py modified/inheritance/<dataset_name>/ modified/label/<dataset_name>/ <label>`
-	
- 	3. then uploading the data from `modified/label/<dataset_name>`
-	
- 	4. using binary opening in Tomviz and saving the data in `modified/open/`
-	
- 	5. `python bring_back.py modified/open/<dataset_name>.tiff modified/result/<dataset_name>/ datasets/<dataset_name>/01_ST/SEG/``
-	
- 	6. the resulting images are in `datasets/result/<dataset_name>`
-
-Pass the name of the dataset in place of `<dataset_name>`. Insert the examined label in `<label>`, if you want to keep all then 0.
-
+Pass the name of the dataset in place of <dataset_name>. Insert the examined label in <label>, if you want to keep all then 0.
